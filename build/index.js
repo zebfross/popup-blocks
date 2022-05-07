@@ -71,13 +71,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/rich-text */ "@wordpress/rich-text");
-/* harmony import */ var _wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./save */ "./src/save.js");
+/* harmony import */ var _wordpress_rich_text__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/rich-text */ "@wordpress/rich-text");
+/* harmony import */ var _wordpress_rich_text__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./save */ "./src/save.js");
 
 
 /**
@@ -91,7 +89,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Simple Highlighter that inserts a <mark> into the markup.
  */
-
 
 
 
@@ -130,7 +127,7 @@ const HighlighterButton = props => {
   const {
     activeFormats
   } = value;
-  const anchorRef = (0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.useAnchorRef)({
+  const anchorRef = (0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_3__.useAnchorRef)({
     ref: contentRef,
     value
   }); // State to show popover.
@@ -173,6 +170,8 @@ const HighlighterButton = props => {
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichTextToolbarButton, {
     icon: "admin-comments",
     onClick: () => {
+      let title = getTitle();
+      if (title) setPopupText(title);
       setShowPopover(true);
     },
     title: 'Tooltip'
@@ -182,7 +181,7 @@ const HighlighterButton = props => {
     onClose: () => setShowPopover(false)
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.PlainText, {
     className: "components-text-control__input",
-    value: popupText || getTitle(),
+    value: popupText ? popupText : "",
     onChange: tooltip => {
       setPopupText(tooltip); // Set a colour or apply a class if these are custom colours.
 
@@ -192,12 +191,12 @@ const HighlighterButton = props => {
           'data-toggle': 'tooltip',
           title: tooltip
         };
-        onChange((0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.applyFormat)(value, {
+        onChange((0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_3__.applyFormat)(value, {
           type: name,
           attributes
         }));
       } else {
-        onChange((0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.toggleFormat)(value, {
+        onChange((0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_3__.toggleFormat)(value, {
           type: name
         })); // Remove Format.
       }
@@ -206,7 +205,7 @@ const HighlighterButton = props => {
 }; // Register the Format.
 
 
-(0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.registerFormatType)('popupblocks/tooltip', {
+(0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_3__.registerFormatType)('popupblocks/tooltip', {
   className: 'popupblocks-tooltip',
   edit: HighlighterButton,
   tagName: 'span',
@@ -222,12 +221,12 @@ const HighlighterButton = props => {
   /**
    * @see ./edit.js
    */
-  edit: _edit__WEBPACK_IMPORTED_MODULE_6__["default"],
+  edit: _edit__WEBPACK_IMPORTED_MODULE_5__["default"],
 
   /**
    * @see ./save.js
    */
-  save: _save__WEBPACK_IMPORTED_MODULE_7__["default"],
+  save: _save__WEBPACK_IMPORTED_MODULE_6__["default"],
   title: "Popup Modal"
 });
 

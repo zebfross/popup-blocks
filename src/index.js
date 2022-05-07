@@ -10,9 +10,8 @@ import { registerBlockType } from '@wordpress/blocks';
  * Simple Highlighter that inserts a <mark> into the markup.
  */
 
-import { ColorPalette, RichTextToolbarButton, PlainText, URLPopover } from '@wordpress/block-editor';
+import { RichTextToolbarButton, PlainText, URLPopover } from '@wordpress/block-editor';
 import { useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import { applyFormat, registerFormatType, toggleFormat, useAnchorRef } from '@wordpress/rich-text';
 
 
@@ -51,7 +50,6 @@ const HighlighterButton = ( props ) => {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const [ popupText, setPopupText ] = useState( false );
 
-
 	// Function to get active colour from format.
 	const getTitle = () => {
 		const formats = activeFormats.filter( format => name === format['type'] );
@@ -87,6 +85,9 @@ const HighlighterButton = ( props ) => {
 			<RichTextToolbarButton
 				icon='admin-comments'
 				onClick={ () => {
+					let title = getTitle();
+					if (title)
+						setPopupText(title);
 					setShowPopover( true );
 				} }
 				title={ 'Tooltip' }
@@ -99,7 +100,7 @@ const HighlighterButton = ( props ) => {
 				>
 					<PlainText
 						className="components-text-control__input"
-						value={popupText || getTitle()}
+						value={popupText ? popupText : ""}
 						onChange={ ( tooltip ) => {
 							setPopupText( tooltip );
 							// Set a colour or apply a class if these are custom colours.
