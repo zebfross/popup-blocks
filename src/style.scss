@@ -5,8 +5,32 @@
  * Replace them with your own styles or remove the file completely.
  */
 
+
+// scss-docs-start import-stack
+// Configuration
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/utilities";
+@import '../node_modules/bootstrap/scss/tooltip';
+@import '../node_modules/bootstrap/scss/popover';
+
 .wp-block-popupblocks-popup-blocks {
 	background-color: #21759b;
 	color: #fff;
 	padding: 2px;
 }
+
+.block-editor-url-popover__input-container textarea {
+  height: 75px;
+  width: 200px;
+}
+
+#editor .popupblocks-tooltip {
+  background-color: #afafaf;
+}
+
+.popupblocks-tooltip svg {
+  height: 18px;
+}
+

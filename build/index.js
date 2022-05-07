@@ -118,8 +118,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 // Import WordPress Components.
 
-const name = 'wholesome/highlighter';
-const cssClass = 'wholesome-highlight'; // Create Highlighter Button with Colour Selection Popover.
+const name = 'popupblocks/tooltip'; // Create Highlighter Button with Colour Selection Popover.
 
 const HighlighterButton = props => {
   const {
@@ -137,32 +136,9 @@ const HighlighterButton = props => {
   }); // State to show popover.
 
   const [showPopover, setShowPopover] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-  const [activeColor, setActiveColor] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false); // Custom highlighter colours.
+  const [popupText, setPopupText] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false); // Function to get active colour from format.
 
-  const colors = [{
-    name: 'Yellow',
-    color: '#fff300'
-  }, {
-    name: 'Green',
-    color: '#79fe0c'
-  }, {
-    name: 'Blue',
-    color: '#4af1f2'
-  }, {
-    name: 'Purple',
-    color: '#df00ff'
-  }, {
-    name: 'Red',
-    color: '#ff2226'
-  }, {
-    name: 'Orange',
-    color: '#ff7b19'
-  }, {
-    name: 'Pink',
-    color: '#ff70c5'
-  }]; // Function to get active colour from format.
-
-  const getActiveColor = () => {
+  const getTitle = () => {
     const formats = activeFormats.filter(format => name === format['type']);
 
     if (formats.length > 0) {
@@ -179,34 +155,15 @@ const HighlighterButton = props => {
 
 
       if (!atts) {
-        if (activeColor) {
-          return {
-            backgroundColor: activeColor
-          };
-        }
-
-        return;
+        return "";
       }
 
-      if (atts.hasOwnProperty('class')) {
+      if (atts.hasOwnProperty('title')) {
         // If the format has set a colour via the class.
-        const parts = atts.class.split('--');
-        const colorName = parts[parts.length - 1];
-        const selectedColor = colors.filter(item => colorName === item.name.toLowerCase())[0];
-        return {
-          backgroundColor: selectedColor.color
-        };
-      } else if (atts.hasOwnProperty('style')) {
-        // If the format has set a colour via an inline style.
-        const {
-          style
-        } = atts;
-        const parts = style.split(': ');
-        const selectedColor = parts[parts.length - 1].replace(';', '');
-        return {
-          backgroundColor: selectedColor
-        };
+        return atts.title;
       }
+
+      return "";
     }
   }; // Note that we set a custom icon that has a highlighter colour overlay.
   // We use the build in `text-color` name and key to pin the popover
@@ -215,34 +172,26 @@ const HighlighterButton = props => {
 
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichTextToolbarButton, {
     icon: "admin-comments",
-    key: isActive ? 'text-color' : 'text-color-not-active',
-    name: isActive ? 'text-color' : undefined,
     onClick: () => {
       setShowPopover(true);
     },
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Highlight', 'wholesome-highlighter')
+    title: 'Tooltip'
   }), showPopover && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.URLPopover, {
     anchorRef: anchorRef,
     className: "components-inline-color-popover",
     onClose: () => setShowPopover(false)
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.ColorPalette, {
-    colors: colors,
-    onChange: color => {
-      setShowPopover(false);
-      setActiveColor(color); // Set a colour or apply a class if these are custom colours.
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.PlainText, {
+    className: "components-text-control__input",
+    value: popupText || getTitle(),
+    onChange: tooltip => {
+      setPopupText(tooltip); // Set a colour or apply a class if these are custom colours.
 
-      if (color) {
-        const selectedColor = colors.filter(item => color === item.color);
-        const attributes = {};
-
-        if (selectedColor.length) {
-          // Colour exists in custom colours, apply a class.
-          attributes.class = `${cssClass}--${selectedColor[0].name.toLowerCase()}`;
-        } else {
-          // Colour does not exist, set a background colour.
-          attributes.style = `background-color: ${color};`;
-        }
-
+      if (tooltip) {
+        const attributes = {
+          class: 'popupblocks-tooltip-link',
+          'data-toggle': 'tooltip',
+          title: tooltip
+        };
         onChange((0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.applyFormat)(value, {
           type: name,
           attributes
@@ -258,10 +207,10 @@ const HighlighterButton = props => {
 
 
 (0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.registerFormatType)('popupblocks/tooltip', {
-  className: 'wholesome-highlight',
+  className: 'popupblocks-tooltip',
   edit: HighlighterButton,
-  tagName: 'mark',
-  title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Highlight', 'wholesome-highlighter')
+  tagName: 'span',
+  title: 'Popupblocks Tooltip'
 });
 /**
  * Every block starts by registering a new block type definition.
