@@ -73,11 +73,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./save */ "./src/save.js");
-/* harmony import */ var _wordpress_rich_text__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/rich-text */ "@wordpress/rich-text");
-/* harmony import */ var _wordpress_rich_text__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/rich-text */ "@wordpress/rich-text");
+/* harmony import */ var _wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./save */ "./src/save.js");
 
 
 /**
@@ -91,7 +91,8 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Simple Highlighter that inserts a <mark> into the markup.
  */
-// Import WordPress Components.
+
+
 
 
 
@@ -110,27 +111,153 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // Create Tooltip Button
+/**
+ * Highlighter Colours.
+ *
+ * Highlighter with a colour selector popover.
+ */
+// Import WordPress Components.
 
-const HighlighterButton = _ref => {
-  let {
+const name = 'wholesome/highlighter';
+const cssClass = 'wholesome-highlight'; // Create Highlighter Button with Colour Selection Popover.
+
+const HighlighterButton = props => {
+  const {
+    contentRef,
     isActive,
     onChange,
     value
-  } = _ref;
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichTextToolbarButton, {
-    icon: "admin-comments",
-    isActive: isActive,
-    onClick: () => {
-      onChange((0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_7__.toggleFormat)(value, {
-        type: 'popupblocks'
-      }));
-    },
-    title: 'Tooltip'
-  });
-};
+  } = props;
+  const {
+    activeFormats
+  } = value;
+  const anchorRef = (0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.useAnchorRef)({
+    ref: contentRef,
+    value
+  }); // State to show popover.
 
-(0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_7__.registerFormatType)('popupblocks/tooltip', {
+  const [showPopover, setShowPopover] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [activeColor, setActiveColor] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(false); // Custom highlighter colours.
+
+  const colors = [{
+    name: 'Yellow',
+    color: '#fff300'
+  }, {
+    name: 'Green',
+    color: '#79fe0c'
+  }, {
+    name: 'Blue',
+    color: '#4af1f2'
+  }, {
+    name: 'Purple',
+    color: '#df00ff'
+  }, {
+    name: 'Red',
+    color: '#ff2226'
+  }, {
+    name: 'Orange',
+    color: '#ff7b19'
+  }, {
+    name: 'Pink',
+    color: '#ff70c5'
+  }]; // Function to get active colour from format.
+
+  const getActiveColor = () => {
+    const formats = activeFormats.filter(format => name === format['type']);
+
+    if (formats.length > 0) {
+      const format = formats[0];
+      const {
+        attributes,
+        unregisteredAttributes
+      } = format;
+      let atts = unregisteredAttributes;
+
+      if (attributes && attributes.length) {
+        atts = attributes;
+      } // If we have no attributes, use the active colour.
+
+
+      if (!atts) {
+        if (activeColor) {
+          return {
+            backgroundColor: activeColor
+          };
+        }
+
+        return;
+      }
+
+      if (atts.hasOwnProperty('class')) {
+        // If the format has set a colour via the class.
+        const parts = atts.class.split('--');
+        const colorName = parts[parts.length - 1];
+        const selectedColor = colors.filter(item => colorName === item.name.toLowerCase())[0];
+        return {
+          backgroundColor: selectedColor.color
+        };
+      } else if (atts.hasOwnProperty('style')) {
+        // If the format has set a colour via an inline style.
+        const {
+          style
+        } = atts;
+        const parts = style.split(': ');
+        const selectedColor = parts[parts.length - 1].replace(';', '');
+        return {
+          backgroundColor: selectedColor
+        };
+      }
+    }
+  }; // Note that we set a custom icon that has a highlighter colour overlay.
+  // We use the build in `text-color` name and key to pin the popover
+  // icon to the toolbar once the colour has been selected.
+
+
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichTextToolbarButton, {
+    icon: "admin-comments",
+    key: isActive ? 'text-color' : 'text-color-not-active',
+    name: isActive ? 'text-color' : undefined,
+    onClick: () => {
+      setShowPopover(true);
+    },
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Highlight', 'wholesome-highlighter')
+  }), showPopover && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.URLPopover, {
+    anchorRef: anchorRef,
+    className: "components-inline-color-popover",
+    onClose: () => setShowPopover(false)
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.ColorPalette, {
+    colors: colors,
+    onChange: color => {
+      setShowPopover(false);
+      setActiveColor(color); // Set a colour or apply a class if these are custom colours.
+
+      if (color) {
+        const selectedColor = colors.filter(item => color === item.color);
+        const attributes = {};
+
+        if (selectedColor.length) {
+          // Colour exists in custom colours, apply a class.
+          attributes.class = `${cssClass}--${selectedColor[0].name.toLowerCase()}`;
+        } else {
+          // Colour does not exist, set a background colour.
+          attributes.style = `background-color: ${color};`;
+        }
+
+        onChange((0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.applyFormat)(value, {
+          type: name,
+          attributes
+        }));
+      } else {
+        onChange((0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.toggleFormat)(value, {
+          type: name
+        })); // Remove Format.
+      }
+    }
+  })));
+}; // Register the Format.
+
+
+(0,_wordpress_rich_text__WEBPACK_IMPORTED_MODULE_4__.registerFormatType)('popupblocks/tooltip', {
   className: 'wholesome-highlight',
   edit: HighlighterButton,
   tagName: 'mark',
@@ -146,12 +273,12 @@ const HighlighterButton = _ref => {
   /**
    * @see ./edit.js
    */
-  edit: _edit__WEBPACK_IMPORTED_MODULE_5__["default"],
+  edit: _edit__WEBPACK_IMPORTED_MODULE_6__["default"],
 
   /**
    * @see ./save.js
    */
-  save: _save__WEBPACK_IMPORTED_MODULE_6__["default"],
+  save: _save__WEBPACK_IMPORTED_MODULE_7__["default"],
   title: "Popup Modal"
 });
 
