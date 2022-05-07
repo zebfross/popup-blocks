@@ -137,21 +137,4 @@ registerFormatType(
 	}
 );
 
-/**
- * Every block starts by registering a new block type definition.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
- */
-registerBlockType( 'popupblocks/modal', {
-	/**
-	 * @see ./edit.js
-	 */
-	edit: Edit,
-	/**
-	 * @see ./save.js
-	 */
-	save,
-	title: "Popup Modal"
-} );
-
 

@@ -211,24 +211,6 @@ const HighlighterButton = props => {
   tagName: 'span',
   title: 'Popupblocks Tooltip'
 });
-/**
- * Every block starts by registering a new block type definition.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-registration/
- */
-
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__.registerBlockType)('popupblocks/modal', {
-  /**
-   * @see ./edit.js
-   */
-  edit: _edit__WEBPACK_IMPORTED_MODULE_5__["default"],
-
-  /**
-   * @see ./save.js
-   */
-  save: _save__WEBPACK_IMPORTED_MODULE_6__["default"],
-  title: "Popup Modal"
-});
 
 /***/ }),
 
