@@ -32,7 +32,6 @@ function setup() : void {
 	// Enqueue Block Styles for Frontend and Backend.
 	add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\enqueue_block_styles', 10 );
 
-	add_action('wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_scripts', 10);
 }
 
 /**
@@ -63,11 +62,6 @@ function enqueue_block_editor_assets() : void {
 		false
 	);
 
-	wp_set_script_translations(
-		PLUGIN_SLUG . '-block-scripts',
-		'wholesome-highlighter',
-		ROOT_DIR . '\languages'
-	);
 }
 
 /**
@@ -85,13 +79,10 @@ function enqueue_block_styles() : void {
 		array(),
 		filemtime( ROOT_DIR . $styles )
 	);
-}
 
-function enqueue_scripts() {
 	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-js', plugins_url('/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', ROOT_FILE), array('jquery'), 1, true);
-	wp_enqueue_script(PLUGIN_SLUG . '-popup-blocks-js', plugins_url('/src/index-frontend.js', ROOT_FILE), array('jquery'),
+	wp_enqueue_script(PLUGIN_SLUG . '-popup-blocks-js', plugins_url('/src/index-frontend.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-js'),
 		filemtime(ROOT_DIR . '/src/index-frontend.js'), true);
 }
-
 
 add_action( 'plugins_loaded', __NAMESPACE__ . '\\setup' );
