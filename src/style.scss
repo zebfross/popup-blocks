@@ -13,6 +13,7 @@
 @import "../node_modules/bootstrap/scss/mixins";
 @import "../node_modules/bootstrap/scss/utilities";
 @import '../node_modules/bootstrap/scss/tooltip';
+@import '../node_modules/bootstrap/scss/close';
 
 .wp-block-popupblocks-popup-blocks {
 	background-color: #21759b;
@@ -37,3 +38,6 @@
   fill: white;
 }
 
+.entry-content .modal-dialog h5 {
+	margin-bottom: 0px;
+}
