@@ -41,3 +41,10 @@
 .entry-content .modal-dialog h5 {
 	margin-bottom: 0px;
 }
+
+.sticky-modal-header {
+  position: sticky;
+  top: 0;
+  background-color: inherit; /* [1] */
+  z-index: 1055; /* [2] */
+}

@@ -168,4 +168,14 @@
   margin-bottom: 0px;
 }
 
+.sticky-modal-header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  background-color: inherit;
+  /* [1] */
+  z-index: 1055;
+  /* [2] */
+}
+
 /*# sourceMappingURL=style-index.css.map*/
