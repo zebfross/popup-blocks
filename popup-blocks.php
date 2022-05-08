@@ -143,7 +143,7 @@ function shortcode_modal($atts, $content) {
 	<div class="modal fade" id="<?= $modal_id ?>" tabindex="-1" role="dialog" aria-labelledby="<?= $modal_id ?>Title" aria-hidden="true">
 		<div class="modal-dialog <?= $atts['size'] ?>" role="document">
 			<div class="modal-content">
-				<div class="modal-header">
+				<div class="modal-header sticky-modal-header">
 					<h5 class="modal-title" id=""><?= $atts['title'] ?></h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
