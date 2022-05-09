@@ -34,6 +34,7 @@ function setup() : void {
 
 	add_shortcode('popup_modal', __NAMESPACE__ . '\\shortcode_modal');
 	add_shortcode('page_content', __NAMESPACE__ . '\\shortcode_page_content');
+	add_shortcode('dynamic_load', __NAMESPACE__ . '\\shortcode_dynamic_load');
 }
 
 /**
@@ -121,26 +122,43 @@ function shortcode_modal($atts, $content) {
 	if ($atts['size'] == 'lg')
 		$atts['size'] = 'modal-lg';
 
+	if ($atts['type'] == 'button' && empty($atts['classes']))
+		$atts['classes'] = 'btn btn-primary';
+
+	$attributes = 'class="' . $atts['classes'] . '" ';
+	$dynamic = !empty($atts['url']);
+	$min = "";
+	$modal_attributes = "";
+	$indicator = "";
+	if ($dynamic) {
+		wp_enqueue_script(PLUGIN_SLUG . '-htmx-js', plugins_url('/src/htmx' . $min . '.js', ROOT_FILE), array(),
+				filemtime(ROOT_DIR . '/src/htmx' . $min . '.js'), true);
+
+		$indicator = '<img class="htmx-indicator" id="' . $modal_id . '-ind" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">';
+		$attributes .= 'hx-get="' . $atts['url'] . '"
+			hx-target="#' . $modal_id . ' .modal-body"
+			hx-trigger="click"
+			hx-indicator="#' . $modal_id . '-ind" ';
+	}// else {
+		$attributes .= ' data-bs-toggle="modal" data-bs-target="#' . $modal_id . '" ';
+	//}
+
 	ob_start();
 	if ($atts['type'] == 'button'):
-		if (empty($atts['classes'])):
-			$atts['classes'] = 'btn btn-primary';
-		endif;
 		?>
-		<button type="button" class="<?= $atts['classes'] ?>" data-bs-toggle="modal" data-bs-target="#<?= $modal_id ?>">
+		<button type="button" <?= $attributes ?>>
 			<?= $atts['text'] ?>
 		</button>
 	<?php
 	else:
 	?>
-		<a href="#<?= $modal_id ?>" class="<?= $atts['classes'] ?>" data-bs-toggle="modal" data-bs-target="#<?= $modal_id ?>">
+		<a href="#<?= $modal_id ?>" <?= $attributes ?>>
 			<?= $atts['text'] ?>
 		</a>
 	<?php
 	endif;
 	?>
-	<!-- Modal -->
-	<div class="modal fade" id="<?= $modal_id ?>" tabindex="-1" role="dialog" aria-labelledby="<?= $modal_id ?>Title" aria-hidden="true">
+	<div class="modal fade" <?php echo $modal_attributes ?> id="<?= $modal_id ?>" tabindex="-1" role="dialog" aria-labelledby="<?= $modal_id ?>Title" aria-hidden="true">
 		<div class="modal-dialog <?= $atts['size'] ?>" role="document">
 			<div class="modal-content">
 				<div class="modal-header sticky-modal-header">
@@ -151,6 +169,7 @@ function shortcode_modal($atts, $content) {
 				</div>
 				<div class="modal-body">
 					<?php echo do_shortcode($content) ?>
+					<?php echo $indicator ?>
 				</div>
 			</div>
 		</div>
@@ -160,6 +179,18 @@ function shortcode_modal($atts, $content) {
 	$content = ob_get_contents();
 	ob_end_clean();
 	return $content;
+}
+
+function shortcode_dynamic_load($atts, $content) {
+	$atts = shortcode_atts([
+		'url' => "",
+		'id' => wp_generate_password(6, false),
+		'trigger' => 'load'
+	], $atts);
+
+	$indicator = $atts['id'] . '-ind';
+	return '<img class="htmx-indicator" id="' . $indicator . '" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">
+	<div hx-trigger="' . $atts['trigger'] . '" id="' . $atts['id'] . '" hx-get="' . $atts['url'] . '" hx-indicator="#' . $indicator . '">' . do_shortcode($content) . '</div>';
 }
 
 /**
