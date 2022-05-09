@@ -88,7 +88,7 @@ function enqueue_block_styles() : void {
 		filemtime(ROOT_DIR . '/src/index-frontend.js'), true);
 }
 
-$modal_count = 1;
+$modal_count = random_int(1, 1000000);
 /**
  * Render pop-up modal
  * [popup_modal type="button|link" title="My Modal Title" size="lg" text="Click to Open"]
@@ -97,7 +97,7 @@ $modal_count = 1;
  * @param $content
  * @return false|string
  */
-function shortcode_modal($atts, $content) {
+function shortcode_modal($atts, $content="") {
 	$default_atts = [
 		'type' => 'link',
 		'url' => null,
@@ -181,7 +181,7 @@ function shortcode_modal($atts, $content) {
 	return $content;
 }
 
-function shortcode_dynamic_load($atts, $content) {
+function shortcode_dynamic_load($atts, $content="") {
 	$atts = shortcode_atts([
 		'url' => "",
 		'id' => wp_generate_password(6, false),
