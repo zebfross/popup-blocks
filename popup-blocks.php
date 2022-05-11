@@ -87,6 +87,9 @@ function enqueue_block_styles() : void {
 	wp_enqueue_style(PLUGIN_SLUG . '-bootstrap-icons',
 	plugins_url("/node_modules/bootstrap-icons/font/bootstrap-icons.css", ROOT_FILE));
 
+	$min = "";
+	wp_enqueue_script(PLUGIN_SLUG . '-htmx-js', plugins_url('/src/htmx' . $min . '.js', ROOT_FILE), array(),
+			filemtime(ROOT_DIR . '/src/htmx' . $min . '.js'), true);
 	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-js', plugins_url('/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', ROOT_FILE), array('jquery'), 1, true);
 	wp_enqueue_script(PLUGIN_SLUG . '-popup-blocks-js', plugins_url('/src/index-frontend.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-js'),
 		filemtime(ROOT_DIR . '/src/index-frontend.js'), true);
@@ -113,6 +116,9 @@ function friendly_modal($url, $text=null, $content='', $title=null, $type=null, 
  * @return false|string
  */
 function shortcode_modal($atts, $content="") {
+	if (wp_is_json_request())
+		return "";
+
 	$default_atts = [
 		'type' => 'link',
 		'url' => null,
@@ -142,13 +148,9 @@ function shortcode_modal($atts, $content="") {
 
 	$attributes = 'class="' . $atts['classes'] . '" ';
 	$dynamic = !empty($atts['url']);
-	$min = "";
 	$modal_attributes = "";
 	$indicator = "";
 	if ($dynamic) {
-		wp_enqueue_script(PLUGIN_SLUG . '-htmx-js', plugins_url('/src/htmx' . $min . '.js', ROOT_FILE), array(),
-				filemtime(ROOT_DIR . '/src/htmx' . $min . '.js'), true);
-
 		$indicator = '<img class="htmx-indicator" id="' . $modal_id . '-ind" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">';
 		$attributes .= 'hx-get="' . $atts['url'] . '"
 			hx-target="#' . $modal_id . ' .modal-body"
@@ -209,10 +211,13 @@ function friendly_dynamic_load($url='', $ajax='', $content='', $trigger=null, $i
 }
 
 function shortcode_dynamic_load($atts, $content="") {
+	if (wp_is_json_request()) {
+		return "";
+	}
 	$atts = shortcode_atts([
 		'url' => "",
 		'ajax' => '',
-		'id' => wp_generate_password(6, false),
+		'id' => 'n' . wp_generate_password(6, false),
 		'trigger' => 'load'
 	], $atts);
 
