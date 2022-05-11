@@ -31,6 +31,7 @@ function setup() : void {
 
 	// Enqueue Block Styles for Frontend and Backend.
 	add_action( 'enqueue_block_assets', __NAMESPACE__ . '\\enqueue_block_styles', 10 );
+	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_block_styles', 10 );
 
 	add_shortcode('popup_modal', __NAMESPACE__ . '\\shortcode_modal');
 	add_shortcode('page_content', __NAMESPACE__ . '\\shortcode_page_content');
@@ -82,6 +83,9 @@ function enqueue_block_styles() : void {
 		array(),
 		filemtime( ROOT_DIR . $styles )
 	);
+
+	wp_enqueue_style(PLUGIN_SLUG . '-bootstrap-icons',
+	plugins_url("/node_modules/bootstrap-icons/font/bootstrap-icons.css", ROOT_FILE));
 
 	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-js', plugins_url('/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', ROOT_FILE), array('jquery'), 1, true);
 	wp_enqueue_script(PLUGIN_SLUG . '-popup-blocks-js', plugins_url('/src/index-frontend.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-js'),
@@ -138,7 +142,10 @@ function shortcode_modal($atts, $content="") {
 		$attributes .= 'hx-get="' . $atts['url'] . '"
 			hx-target="#' . $modal_id . ' .modal-body"
 			hx-trigger="click"
-			hx-indicator="#' . $modal_id . '-ind" ';
+			hx-indicator="#' . $modal_id . '-ind"
+			';
+		$modal_attributes .= '
+			_="on htmx:afterOnLoad hide_modal(\'#' . $modal_id . '\')"';
 	}// else {
 		$attributes .= ' data-bs-toggle="modal" data-bs-target="#' . $modal_id . '" ';
 	//}

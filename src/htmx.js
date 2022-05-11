@@ -1953,14 +1953,14 @@
 					indicators = [elt];
 				}
 				forEach(indicators, function (ic) {
-					ic.classList["add"].call(ic.classList, htmx.config.requestClass);
+					ic.classList.toggle(htmx.config.requestClass);
 				});
 				return indicators;
 			}
 
 			function removeRequestIndicatorClasses(indicators) {
 				forEach(indicators, function (ic) {
-					ic.classList["remove"].call(ic.classList, htmx.config.requestClass);
+					ic.classList.toggle(htmx.config.requestClass);
 				});
 			}
 
