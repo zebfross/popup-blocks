@@ -93,6 +93,17 @@ function enqueue_block_styles() : void {
 }
 
 $modal_count = random_int(1, 1000000);
+
+function friendly_modal($url, $text=null, $content='', $title=null, $type=null, $size=null) {
+	return shortcode_modal([
+		'url' => $url,
+		'type' => $type,
+		'text' => $text,
+		'size' => $size,
+		'title' => $title
+	], $content);
+}
+
 /**
  * Render pop-up modal
  * [popup_modal type="button|link" title="My Modal Title" size="lg" text="Click to Open"]
@@ -188,12 +199,26 @@ function shortcode_modal($atts, $content="") {
 	return $content;
 }
 
+function friendly_dynamic_load($url='', $ajax='', $content='', $trigger=null, $id=null) {
+	return shortcode_dynamic_load([
+		'url' => $url,
+		'ajax' => $ajax,
+		'trigger' => $trigger,
+		'id' => $id
+	], $content);
+}
+
 function shortcode_dynamic_load($atts, $content="") {
 	$atts = shortcode_atts([
 		'url' => "",
+		'ajax' => '',
 		'id' => wp_generate_password(6, false),
 		'trigger' => 'load'
 	], $atts);
+
+	if (!empty($atts['ajax']) && class_exists('\Redify\Integrations\RestApi')) {
+		$atts['url'] = \Redify\Integrations\RestApi::redify_ajax_url($atts['ajax']);
+	}
 
 	$indicator = $atts['id'] . '-ind';
 	return '<img class="htmx-indicator" id="' . $indicator . '" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">

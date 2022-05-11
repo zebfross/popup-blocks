@@ -8,7 +8,7 @@
 
 // scss-docs-start import-stack
 // Configuration
-/*
+
 @import "../node_modules/bootstrap/scss/functions";
 @import "../node_modules/bootstrap/scss/variables";
 @import "../node_modules/bootstrap/scss/mixins";
@@ -17,15 +17,15 @@
 @import '../node_modules/bootstrap/scss/close';
 @import '../node_modules/bootstrap/scss/alert';
 @import '../node_modules/bootstrap/scss/modal';
-@import '../node_modules/bootstrap/scss/tables';
-*/
+// @import '../node_modules/bootstrap/scss/tables';
+
 /*!
  * Bootstrap v5.1.3 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-
+/*
 // scss-docs-start import-stack
 // Configuration
 @import "../node_modules/bootstrap/scss/functions";
@@ -72,7 +72,7 @@
 // Utilities
 @import "../node_modules/bootstrap/scss/utilities/api";
 // scss-docs-end import-stack
-
+*/
 .wp-block-popupblocks-popup-blocks {
 	background-color: #21759b;
 	color: #fff;
