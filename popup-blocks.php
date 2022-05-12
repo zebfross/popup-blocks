@@ -97,13 +97,14 @@ function enqueue_block_styles() : void {
 
 $modal_count = random_int(1, 1000000);
 
-function friendly_modal($url, $text=null, $content='', $title=null, $type=null, $size=null) {
+function friendly_modal($url, $text=null, $content='', $title=null, $type=null, $size=null, $ajax=null) {
 	return shortcode_modal([
 		'url' => $url,
 		'type' => $type,
 		'text' => $text,
 		'size' => $size,
-		'title' => $title
+		'title' => $title,
+		'ajax' => $ajax
 	], $content);
 }
 
@@ -122,6 +123,7 @@ function shortcode_modal($atts, $content="") {
 	$default_atts = [
 		'type' => 'link',
 		'url' => null,
+		'ajax' => null,
 		'classes' => '',
 		'text' => '[text]',
 		'title' => '[title]',
@@ -133,6 +135,10 @@ function shortcode_modal($atts, $content="") {
 	enqueue_block_styles();
 
 	$atts = shortcode_atts($default_atts, $atts);
+
+	if (!empty($atts['ajax']) && class_exists('\Redify\Integrations\RestApi')) {
+		$atts['url'] = \Redify\Integrations\RestApi::redify_ajax_url($atts['ajax']);
+	}
 
 	$modal_id = 'popup-modal' . $modal_count;
 	$modal_count += 1;
