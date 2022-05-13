@@ -239,7 +239,7 @@ function shortcode_dynamic_load($atts, $content="") {
 
 	$indicator = $atts['id'] . '-ind';
 	return '<img class="htmx-indicator" id="' . $indicator . '" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">
-	<div hx-trigger="' . $atts['trigger'] . '" id="' . $atts['id'] . '" hx-get="' . $atts['url'] . '" hx-indicator="#' . $indicator . '">' . do_shortcode($content) . '</div>';
+	<div _="on htmx:afterSwap call reinitCmb()" hx-trigger="' . $atts['trigger'] . '" id="' . $atts['id'] . '" hx-get="' . $atts['url'] . '" hx-indicator="#' . $indicator . '">' . do_shortcode($content) . '</div>';
 }
 
 /**

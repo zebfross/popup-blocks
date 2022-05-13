@@ -2481,13 +2481,13 @@
 				var resolve = null;
 				var reject = null;
 				etc = etc != null ? etc : {};
-				if(etc.returnPromise && typeof Promise !== "undefined"){
+				if (etc.returnPromise && typeof Promise !== "undefined") {
 					var promise = new Promise(function (_resolve, _reject) {
 						resolve = _resolve;
 						reject = _reject;
 					});
 				}
-				if(elt == null) {
+				if (elt == null) {
 					elt = getDocument().body;
 				}
 				var responseHandler = etc.handler || handleAjaxResponse;
@@ -2537,7 +2537,7 @@
 					if (eltData.abortable) {
 						triggerEvent(syncElt, 'htmx:abort'); // abort the current request and continue
 					} else {
-						if(queueStrategy == null){
+						if (queueStrategy == null) {
 							if (event) {
 								var eventData = getInternalData(event);
 								if (eventData && eventData.triggerSpec && eventData.triggerSpec.queue) {
@@ -2572,7 +2572,7 @@
 				var xhr = new XMLHttpRequest();
 				eltData.xhr = xhr;
 				eltData.abortable = abortable;
-				var endRequestLock = function(){
+				var endRequestLock = function () {
 					eltData.xhr = null;
 					eltData.abortable = false;
 					if (eltData.queuedRequests != null &&
@@ -2586,7 +2586,7 @@
 					var promptResponse = prompt(promptQuestion);
 					// prompt returns null if cancelled and empty string if accepted with no entry
 					if (promptResponse === null ||
-						!triggerEvent(elt, 'htmx:prompt', {prompt: promptResponse, target:target})) {
+						!triggerEvent(elt, 'htmx:prompt', {prompt: promptResponse, target: target})) {
 						maybeCall(resolve);
 						endRequestLock();
 						return promise;
@@ -2595,13 +2595,22 @@
 
 				var confirmQuestion = getClosestAttributeValue(elt, "hx-confirm");
 				if (confirmQuestion) {
-					if(!confirm(confirmQuestion)) {
-						maybeCall(resolve);
-						endRequestLock()
-						return promise;
-					}
+					redifyConfirm(confirmQuestion, "Ok", function(result) {
+						if (!result) {
+							maybeCall(resolve);
+							endRequestLock()
+						} else {
+							issueConfirmedAjaxRequest(resolve, promise, xhr, verb, path, elt, event, etc, promptResponse, target, endRequestLock, responseHandler);
+						}
+					});
+					return promise;
+				} else {
+					return issueConfirmedAjaxRequest(resolve, promise, xhr, verb, path, elt, event, etc, promptResponse, target, endRequestLock, responseHandler);
 				}
 
+			}
+
+			function issueConfirmedAjaxRequest(resolve, promise, xhr, verb, path, elt, event, etc, promptResponse, target, endRequestLock, responseHandler) {
 
 				var headers = getHeaders(elt, target, promptResponse);
 				if (etc.headers) {
@@ -2631,17 +2640,17 @@
 				var requestConfig = {
 					parameters: filteredParameters,
 					unfilteredParameters: allParameters,
-					headers:headers,
-					target:target,
-					verb:verb,
-					errors:errors,
+					headers: headers,
+					target: target,
+					verb: verb,
+					errors: errors,
 					withCredentials: etc.credentials || requestAttrValues.credentials || htmx.config.withCredentials,
-					timeout:  etc.timeout || requestAttrValues.timeout || htmx.config.timeout,
-					path:path,
-					triggeringEvent:event
+					timeout: etc.timeout || requestAttrValues.timeout || htmx.config.timeout,
+					path: path,
+					triggeringEvent: event
 				};
 
-				if(!triggerEvent(elt, 'htmx:configRequest', requestConfig)){
+				if (!triggerEvent(elt, 'htmx:configRequest', requestConfig)) {
 					maybeCall(resolve);
 					endRequestLock();
 					return promise;
@@ -2654,7 +2663,7 @@
 				filteredParameters = requestConfig.parameters;
 				errors = requestConfig.errors;
 
-				if(errors && errors.length > 0){
+				if (errors && errors.length > 0) {
 					triggerEvent(elt, 'htmx:validation:halted', requestConfig)
 					maybeCall(resolve);
 					endRequestLock();
@@ -2699,8 +2708,9 @@
 					}
 				}
 
-				var responseInfo = {xhr: xhr, target: target, requestConfig: requestConfig, etc:etc, pathInfo:{
-						path:path, finalPath:finalPathForGet, anchor:anchor
+				var responseInfo = {
+					xhr: xhr, target: target, requestConfig: requestConfig, etc: etc, pathInfo: {
+						path: path, finalPath: finalPathForGet, anchor: anchor
 					}
 				};
 
@@ -2729,7 +2739,7 @@
 						maybeCall(resolve);
 						endRequestLock();
 					} catch (e) {
-						triggerErrorEvent(elt, 'htmx:onLoadError', mergeObjects({error:e}, responseInfo));
+						triggerErrorEvent(elt, 'htmx:onLoadError', mergeObjects({error: e}, responseInfo));
 						throw e;
 					}
 				}
@@ -2740,34 +2750,34 @@
 					maybeCall(reject);
 					endRequestLock();
 				}
-				xhr.onabort = function() {
+				xhr.onabort = function () {
 					removeRequestIndicatorClasses(indicators);
 					triggerErrorEvent(elt, 'htmx:afterRequest', responseInfo);
 					triggerErrorEvent(elt, 'htmx:sendAbort', responseInfo);
 					maybeCall(reject);
 					endRequestLock();
 				}
-				xhr.ontimeout = function() {
+				xhr.ontimeout = function () {
 					removeRequestIndicatorClasses(indicators);
 					triggerErrorEvent(elt, 'htmx:afterRequest', responseInfo);
 					triggerErrorEvent(elt, 'htmx:timeout', responseInfo);
 					maybeCall(reject);
 					endRequestLock();
 				}
-				if(!triggerEvent(elt, 'htmx:beforeRequest', responseInfo)){
+				if (!triggerEvent(elt, 'htmx:beforeRequest', responseInfo)) {
 					maybeCall(resolve);
 					endRequestLock()
 					return promise
 				}
 				var indicators = addRequestIndicatorClasses(elt);
 
-				forEach(['loadstart', 'loadend', 'progress', 'abort'], function(eventName) {
+				forEach(['loadstart', 'loadend', 'progress', 'abort'], function (eventName) {
 					forEach([xhr, xhr.upload], function (target) {
-						target.addEventListener(eventName, function(event){
+						target.addEventListener(eventName, function (event) {
 							triggerEvent(elt, "htmx:xhr:" + eventName, {
-								lengthComputable:event.lengthComputable,
-								loaded:event.loaded,
-								total:event.total
+								lengthComputable: event.lengthComputable,
+								loaded: event.loaded,
+								total: event.total
 							});
 						})
 					});
