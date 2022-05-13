@@ -97,14 +97,15 @@ function enqueue_block_styles() : void {
 
 $modal_count = random_int(1, 1000000);
 
-function friendly_modal($url, $text=null, $content='', $title=null, $type=null, $size=null, $ajax=null) {
+function friendly_modal($url, $text=null, $content='', $title=null, $type='link', $size=null, $ajax=null, $swap=true) {
 	return shortcode_modal([
 		'url' => $url,
 		'type' => $type,
 		'text' => $text,
 		'size' => $size,
 		'title' => $title,
-		'ajax' => $ajax
+		'ajax' => $ajax,
+		'swap' => $swap
 	], $content);
 }
 
@@ -127,7 +128,8 @@ function shortcode_modal($atts, $content="") {
 		'classes' => '',
 		'text' => '[text]',
 		'title' => '[title]',
-		'size' => ''
+		'size' => '',
+		'swap' => true
 	];
 
 	global $modal_count;
@@ -163,11 +165,13 @@ function shortcode_modal($atts, $content="") {
 			hx-trigger="click"
 			hx-indicator="#' . $modal_id . '-ind"
 			';
-		$modal_attributes .= '
-			_="on htmx:afterOnLoad hide_modal(\'#' . $modal_id . '\')"';
+		if ($atts['swap'] == false)
+			$attributes .= ' hx-swap="none" ';
 	}// else {
 		$attributes .= ' data-bs-toggle="modal" data-bs-target="#' . $modal_id . '" ';
 	//}
+	$modal_attributes .= '
+			_="on formsaved from body hide_modal(\'#' . $modal_id . '\')"';
 
 	ob_start();
 	if ($atts['type'] == 'button'):
@@ -208,12 +212,14 @@ function shortcode_modal($atts, $content="") {
 }
 
 function friendly_dynamic_load($url='', $ajax='', $content='', $trigger=null, $id=null) {
-	return shortcode_dynamic_load([
-		'url' => $url,
-		'ajax' => $ajax,
-		'trigger' => $trigger,
-		'id' => $id
-	], $content);
+	$params = [
+			'url' => $url,
+			'ajax' => $ajax,
+			'trigger' => $trigger
+	];
+	if (!empty($id))
+		$params['id'] = $id;
+	return shortcode_dynamic_load($params, $content);
 }
 
 function shortcode_dynamic_load($atts, $content="") {
