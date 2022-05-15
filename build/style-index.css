@@ -9661,4 +9661,14 @@ textarea.form-control-lg {
   /* [2] */
 }
 
+.sticky-modal-footer {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+  background-color: inherit;
+  /* [1] */
+  z-index: 1055;
+  /* [2] */
+}
+
 /*# sourceMappingURL=style-index.css.map*/
