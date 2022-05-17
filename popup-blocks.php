@@ -102,7 +102,7 @@ function enqueue_block_styles() : void {
 
 $modal_count = random_int(1, 1000000);
 
-function friendly_modal($url, $text=null, $content='', $title=null, $type='link', $size=null, $ajax=null, $swap=true, $isForm=true) {
+function friendly_modal($url, $text=null, $content='', $title=null, $type='link', $size=null, $ajax=null, $swap=true, $isForm='true', $classes='') {
 	return shortcode_modal([
 		'url' => $url,
 		'type' => $type,
@@ -111,7 +111,8 @@ function friendly_modal($url, $text=null, $content='', $title=null, $type='link'
 		'title' => $title,
 		'ajax' => $ajax,
 		'swap' => $swap,
-		'form' => $isForm
+		'form' => $isForm,
+		'classes' => $classes
 	], $content);
 }
 
@@ -133,10 +134,10 @@ function shortcode_modal($atts, $content="") {
 		'ajax' => null,
 		'classes' => '',
 		'text' => '[text]',
-		'title' => '[title]',
+		'title' => '',
 		'size' => '',
 		'swap' => true,
-		'form' => true
+		'form' => 'true'
 	];
 
 	global $modal_count;
@@ -173,6 +174,7 @@ function shortcode_modal($atts, $content="") {
 			hx-target="#' . $modal_id . ' .modal-body"
 			hx-trigger="click"
 			hx-indicator="#' . $modal_id . '-ind"
+			hx-swap="innerHTML"
 			';
 		if ($atts['swap'] == false)
 			$attributes .= ' hx-swap="none" ';
@@ -210,7 +212,7 @@ function shortcode_modal($atts, $content="") {
 					<?php echo do_shortcode($content) ?>
 					<?php echo $indicator ?>
 				</div>
-				<?php if ($atts['form']): ?>
+				<?php if ($atts['form'] === 'true'): ?>
 					<div class="modal-footer sticky-modal-footer">
 						<button type="button" class="btn btn-secondary modal-btn-cancel" data-bs-dismiss="modal">Close</button>
 						<button type="button" class="btn btn-primary modal-btn-save" onclick="saveNearestForm(this)">Save</button>
