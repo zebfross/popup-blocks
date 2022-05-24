@@ -103,6 +103,9 @@ function enqueue_block_styles() : void {
 $modal_count = random_int(1, 1000000);
 
 function friendly_modal($url, $text=null, $content='', $title=null, $type='link', $size=null, $ajax=null, $swap=true, $isForm='true', $classes='') {
+	if (is_callable($content)) {
+		$content = $content();
+	}
 	return shortcode_modal([
 		'url' => $url,
 		'type' => $type,
@@ -200,7 +203,7 @@ function shortcode_modal($atts, $content="") {
 	endif;
 	?>
 	<div class="modal fade" <?php echo $modal_attributes ?> id="<?= $modal_id ?>" tabindex="-1" role="dialog" aria-labelledby="<?= $modal_id ?>Title" aria-hidden="true">
-		<div class="modal-dialog <?= $atts['size'] ?>" role="document">
+		<div class="modal-dialog modal-dialog-centered <?= $atts['size'] ?>" role="document">
 			<div class="modal-content">
 				<div class="modal-header sticky-modal-header">
 					<h5 class="modal-title" id=""><?= $atts['title'] ?></h5>
