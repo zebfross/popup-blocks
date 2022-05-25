@@ -4,6 +4,6 @@ jQuery(function () {
 })
 
 function saveNearestForm(e) {
-	$submit = jQuery(e).parent().parent().find('input[type="submit"]');
+	$submit = jQuery(e).parent().parent().find('button[type="submit"]');
 	$submit.click();
 }

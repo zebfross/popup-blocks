@@ -233,7 +233,7 @@ function shortcode_modal($atts, $content="") {
 		$atts['size'] = 'modal-lg';
 
 	$modal_attributes = "";
-	$indicator = '<img class="htmx-indicator" id="' . $modal_id . '-ind" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">';
+	$indicator = '<div class="htmx-indicator indicator-full" id="' . $modal_id . '-ind"><img src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '"></div>';
 
 	$modal_attributes .= '
 			_="on formsaved from body hide_modal(\'#' . $modal_id . '\')"';
@@ -252,9 +252,11 @@ function shortcode_modal($atts, $content="") {
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
+				<div>
+					<?php echo $indicator ?>
 				<div class="modal-body">
 					<?php echo do_shortcode($content) ?>
-					<?php echo $indicator ?>
+				</div>
 				</div>
 				<?php if ($atts['form'] === 'true'): ?>
 					<div class="modal-footer sticky-modal-footer">
@@ -302,8 +304,8 @@ function shortcode_dynamic_load($atts, $content="") {
 	}
 
 	$indicator = $atts['id'] . '-ind';
-	return '<img class="htmx-indicator" id="' . $indicator . '" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">
-	<div _="on htmx:afterSwap call reinitCmb()" hx-trigger="' . $atts['trigger'] . '" id="' . $atts['id'] . '" hx-get="' . $atts['url'] . '" hx-indicator="#' . $indicator . '">' . do_shortcode($content) . '</div>';
+	return '<div class="dynamic-container"><div id="' . $indicator . '" class="htmx-indicator indicator-full"><img src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '"></div>
+	<div _="on htmx:afterSwap call reinitCmb()" hx-trigger="' . $atts['trigger'] . '" id="' . $atts['id'] . '" hx-get="' . $atts['url'] . '" hx-indicator="#' . $indicator . '">' . do_shortcode($content) . '</div></div>';
 }
 
 /**

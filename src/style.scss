@@ -117,3 +117,15 @@
   background-color: inherit; /* [1] */
   z-index: 1055; /* [2] */
 }
+
+.dynamic-container {
+  position:relative;
+}
+
+.htmx-request.htmx-indicator.indicator-full {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  text-align:center;
+  z-index: $zindex-tooltip;
+}
