@@ -39,6 +39,7 @@ function setup() : void {
 	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_block_styles', 10 );
 
 	add_shortcode('popup_modal', __NAMESPACE__ . '\\shortcode_modal');
+	add_shortcode('popup_modal_button', __NAMESPACE__ . '\\shortcode_modal_button');
 	add_shortcode('page_content', __NAMESPACE__ . '\\shortcode_page_content');
 	add_shortcode('dynamic_load', __NAMESPACE__ . '\\shortcode_dynamic_load');
 }
@@ -102,7 +103,7 @@ function enqueue_block_styles() : void {
 
 $modal_count = random_int(1, 1000000);
 
-function friendly_modal($url, $text=null, $content='', $title=null, $type='link', $size=null, $ajax=null, $swap=true, $isForm='true', $classes='') {
+function friendly_modal($url, $text=null, $content='', $title=null, $type='link', $size=null, $ajax=null, $swap=true, $isForm='true', $classes='', $id='') {
 	if (is_callable($content)) {
 		$content = $content();
 	}
@@ -115,8 +116,74 @@ function friendly_modal($url, $text=null, $content='', $title=null, $type='link'
 		'ajax' => $ajax,
 		'swap' => $swap,
 		'form' => $isForm,
-		'classes' => $classes
+		'classes' => $classes,
+		'id' => $id
 	], $content);
+}
+
+function friendly_modal_button($id, $url, $text=null, $type='link', $ajax=null, $classes='') {
+
+	return shortcode_modal_button([
+			'id' => $id,
+			'url' => $url,
+			'type' => $type,
+			'text' => $text,
+			'ajax' => $ajax,
+			'classes' => $classes
+	]);
+}
+
+function shortcode_modal_button($atts, $content="") {
+	if (wp_is_json_request())
+		return "";
+
+	$default_atts = [
+		'type' => 'link',
+		'url' => '',
+		'ajax' => false,
+		'classes' => '',
+		'text' => '[text]',
+		'id' => ''
+	];
+
+	$atts = shortcode_atts($default_atts, $atts);
+	$modal_id = $atts['id'];
+
+	if (!empty($atts['ajax']) && class_exists('\Redify\Integrations\RestApi')) {
+		$atts['url'] = \Redify\Integrations\RestApi::redify_ajax_url($atts['ajax']);
+	}
+
+	if ($atts['type'] == 'button' && empty($atts['classes']))
+		$atts['classes'] .= 'btn btn-primary';
+
+	$attributes = 'class="' . $atts['classes'] . '" ';
+	$dynamic = !empty($atts['url']);
+	if ($dynamic) {
+		$attributes .= 'hx-get="' . $atts['url'] . '"
+			hx-target="#' . $modal_id . ' .modal-body"
+			hx-trigger="click"
+			hx-indicator="#' . $modal_id . '-ind"
+			hx-swap="innerHTML"
+			';
+	}
+	$attributes .= ' data-bs-toggle="modal" data-bs-target="#' . $modal_id . '" ';
+
+	ob_start();
+
+	if ($atts['type'] == 'button'):
+		?>
+		<button type="button" <?= $attributes ?>>
+			<?= $atts['text'] ?>
+		</button>
+	<?php
+	else:
+		?>
+		<a href="#<?= $modal_id ?>" <?= $attributes ?>>
+			<?= $atts['text'] ?>
+		</a>
+	<?php
+	endif;
+	return ob_get_clean();
 }
 
 /**
@@ -131,6 +198,8 @@ function shortcode_modal($atts, $content="") {
 	if (wp_is_json_request())
 		return "";
 
+	global $modal_count;
+
 	$default_atts = [
 		'type' => 'link',
 		'url' => null,
@@ -140,10 +209,10 @@ function shortcode_modal($atts, $content="") {
 		'title' => '',
 		'size' => '',
 		'swap' => true,
-		'form' => 'true'
+		'form' => 'true',
+		'id'   => ''
 	];
 
-	global $modal_count;
 	global $IN_POPUP_MODAL;
 	$IN_POPUP_MODAL = true;
 
@@ -151,11 +220,10 @@ function shortcode_modal($atts, $content="") {
 
 	$atts = shortcode_atts($default_atts, $atts);
 
-	if (!empty($atts['ajax']) && class_exists('\Redify\Integrations\RestApi')) {
-		$atts['url'] = \Redify\Integrations\RestApi::redify_ajax_url($atts['ajax']);
-	}
+	if (empty($atts['id']))
+		$atts['id'] = 'popup-modal' . $modal_count;
 
-	$modal_id = 'popup-modal' . $modal_count;
+	$modal_id = $atts['id'];
 	$modal_count += 1;
 
 	if (str_starts_with(ltrim($content), '</p>'))
@@ -164,43 +232,16 @@ function shortcode_modal($atts, $content="") {
 	if ($atts['size'] == 'lg')
 		$atts['size'] = 'modal-lg';
 
-	if ($atts['type'] == 'button' && empty($atts['classes']))
-		$atts['classes'] = 'btn btn-primary';
-
-	$attributes = 'class="' . $atts['classes'] . '" ';
-	$dynamic = !empty($atts['url']);
 	$modal_attributes = "";
-	$indicator = "";
-	if ($dynamic) {
-		$indicator = '<img class="htmx-indicator" id="' . $modal_id . '-ind" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">';
-		$attributes .= 'hx-get="' . $atts['url'] . '"
-			hx-target="#' . $modal_id . ' .modal-body"
-			hx-trigger="click"
-			hx-indicator="#' . $modal_id . '-ind"
-			hx-swap="innerHTML"
-			';
-		if ($atts['swap'] == false)
-			$attributes .= ' hx-swap="none" ';
-	}// else {
-		$attributes .= ' data-bs-toggle="modal" data-bs-target="#' . $modal_id . '" ';
-	//}
+	$indicator = '<img class="htmx-indicator" id="' . $modal_id . '-ind" src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '">';
+
 	$modal_attributes .= '
 			_="on formsaved from body hide_modal(\'#' . $modal_id . '\')"';
 
 	ob_start();
-	if ($atts['type'] == 'button'):
-		?>
-		<button type="button" <?= $attributes ?>>
-			<?= $atts['text'] ?>
-		</button>
-	<?php
-	else:
-	?>
-		<a href="#<?= $modal_id ?>" <?= $attributes ?>>
-			<?= $atts['text'] ?>
-		</a>
-	<?php
-	endif;
+	if ($atts['type'] != 'none') {
+		echo shortcode_modal_button($atts);
+	}
 	?>
 	<div class="modal fade" <?php echo $modal_attributes ?> id="<?= $modal_id ?>" tabindex="-1" role="dialog" aria-labelledby="<?= $modal_id ?>Title" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered <?= $atts['size'] ?>" role="document">
