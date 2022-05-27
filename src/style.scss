@@ -99,6 +99,10 @@
   fill: white;
 }
 
+.popupblocks-tooltip.popupblocks-noicon::after {
+  content:"";
+}
+
 .entry-content .modal-dialog h5 {
 	margin-bottom: 0px;
 }

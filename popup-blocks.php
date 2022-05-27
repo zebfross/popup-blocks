@@ -252,11 +252,9 @@ function shortcode_modal($atts, $content="") {
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div>
 					<?php echo $indicator ?>
 				<div class="modal-body">
 					<?php echo do_shortcode($content) ?>
-				</div>
 				</div>
 				<?php if ($atts['form'] === 'true'): ?>
 					<div class="modal-footer sticky-modal-footer">
@@ -330,6 +328,10 @@ function shortcode_page_content($atts) {
 	}
 
 	return "";
+}
+
+function friendly_icon_tooltip($icon, $tooltip) {
+	return "<span class='popupblocks-tooltip popupblocks-noicon' data-toggle='tooltip' title='$tooltip'><i class='bi bi-$icon'></i></span>";
 }
 
 add_action( 'plugins_loaded', __NAMESPACE__ . '\\setup' );
