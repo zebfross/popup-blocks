@@ -103,7 +103,7 @@ function enqueue_block_styles() : void {
 
 $modal_count = random_int(1, 1000000);
 
-function friendly_modal($url, $text=null, $content='', $title=null, $type='link', $size=null, $ajax=null, $swap=true, $isForm='true', $classes='', $id='') {
+function friendly_modal($url, $text=null, $content='', $title=null, $type='link', $size=null, $ajax=null, $swap=true, $isForm='true', $classes='', $id='', $form_button='Save') {
 	if (is_callable($content)) {
 		$content = $content();
 	}
@@ -117,7 +117,8 @@ function friendly_modal($url, $text=null, $content='', $title=null, $type='link'
 		'swap' => $swap,
 		'form' => $isForm,
 		'classes' => $classes,
-		'id' => $id
+		'id' => $id,
+		'form_button' => $form_button
 	], $content);
 }
 
@@ -210,7 +211,8 @@ function shortcode_modal($atts, $content="") {
 		'size' => '',
 		'swap' => true,
 		'form' => 'true',
-		'id'   => ''
+		'id'   => '',
+		'form_button' => 'Save'
 	];
 
 	global $IN_POPUP_MODAL;
@@ -259,7 +261,7 @@ function shortcode_modal($atts, $content="") {
 				<?php if ($atts['form'] === 'true'): ?>
 					<div class="modal-footer sticky-modal-footer">
 						<button type="button" class="btn btn-secondary modal-btn-cancel" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary modal-btn-save" onclick="saveNearestForm(this)">Save</button>
+						<button type="button" class="btn btn-primary modal-btn-save" onclick="saveNearestForm(this)"><?php echo $atts['form_button'] ?></button>
 					</div>
 				<?php endif; ?>
 			</div>
