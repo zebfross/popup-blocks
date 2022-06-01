@@ -96,7 +96,17 @@ function enqueue_block_styles() : void {
 	$min = "";
 	wp_enqueue_script(PLUGIN_SLUG . '-htmx-js', plugins_url('/src/htmx' . $min . '.js', ROOT_FILE), array(),
 			filemtime(ROOT_DIR . '/src/htmx' . $min . '.js'), true);
-	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-js', plugins_url('/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', ROOT_FILE), array('jquery'), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-events-js', plugins_url('/node_modules/bootstrap/js/dist/dom/event-handler.js', ROOT_FILE), array(), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-data-js', plugins_url('/node_modules/bootstrap/js/dist/dom/data.js', ROOT_FILE), array(), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-selector-js', plugins_url('/node_modules/bootstrap/js/dist/dom/selector-engine.js', ROOT_FILE), array(), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-manip-js', plugins_url('/node_modules/bootstrap/js/dist/dom/manipulator.js', ROOT_FILE), array(), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-base-js', plugins_url('/node_modules/bootstrap/js/dist/base-component.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-events-js', PLUGIN_SLUG . '-bootstrap-data-js', PLUGIN_SLUG . '-bootstrap-selector-js', PLUGIN_SLUG . '-bootstrap-manip-js'), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-popper-js', plugins_url('/src/popper.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-base-js'), 2, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-alert-js', plugins_url('/node_modules/bootstrap/js/dist/alert.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-popper-js'), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-modal-js', plugins_url('/node_modules/bootstrap/js/dist/modal.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-popper-js'), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-dropdown-js', plugins_url('/node_modules/bootstrap/js/dist/dropdown.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-popper-js'), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-tooltip-js', plugins_url('/node_modules/bootstrap/js/dist/tooltip.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-popper-js'), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-toast-js', plugins_url('/node_modules/bootstrap/js/dist/toast.js', ROOT_FILE), array(), 1, true);
 	wp_enqueue_script(PLUGIN_SLUG . '-popup-blocks-js', plugins_url('/src/index-frontend.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-js'),
 		filemtime(ROOT_DIR . '/src/index-frontend.js'), true);
 }
