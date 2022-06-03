@@ -106,8 +106,8 @@ function enqueue_block_styles() : void {
 	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-modal-js', plugins_url('/node_modules/bootstrap/js/dist/modal.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-popper-js'), 1, true);
 	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-dropdown-js', plugins_url('/node_modules/bootstrap/js/dist/dropdown.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-popper-js'), 1, true);
 	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-tooltip-js', plugins_url('/node_modules/bootstrap/js/dist/tooltip.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-popper-js'), 1, true);
-	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-toast-js', plugins_url('/node_modules/bootstrap/js/dist/toast.js', ROOT_FILE), array(), 1, true);
-	wp_enqueue_script(PLUGIN_SLUG . '-popup-blocks-js', plugins_url('/src/index-frontend.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-js'),
+	wp_enqueue_script(PLUGIN_SLUG . '-bootstrap-toast-js', plugins_url('/node_modules/bootstrap/js/dist/toast.js', ROOT_FILE), array(PLUGIN_SLUG . '-bootstrap-base-js'), 1, true);
+	wp_enqueue_script(PLUGIN_SLUG . '-popup-blocks-js', plugins_url('/src/index-frontend.js', ROOT_FILE), array('jquery'),
 		filemtime(ROOT_DIR . '/src/index-frontend.js'), true);
 }
 
@@ -247,9 +247,6 @@ function shortcode_modal($atts, $content="") {
 	$modal_attributes = "";
 	$indicator = '<div class="htmx-indicator indicator-full" id="' . $modal_id . '-ind"><img src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '"></div>';
 
-	$modal_attributes .= '
-			_="on formsaved from body hide_modal(\'#' . $modal_id . '\')"';
-
 	ob_start();
 	if ($atts['type'] != 'none') {
 		echo shortcode_modal_button($atts);
@@ -315,7 +312,7 @@ function shortcode_dynamic_load($atts, $content="") {
 
 	$indicator = $atts['id'] . '-ind';
 	return '<div class="dynamic-container"><div id="' . $indicator . '" class="htmx-indicator indicator-full"><img src="' . plugins_url('/src/spinner.svg', ROOT_FILE) . '"></div>
-	<div _="on htmx:afterSwap call reinitCmb()" hx-trigger="' . $atts['trigger'] . '" id="' . $atts['id'] . '" hx-get="' . $atts['url'] . '" hx-indicator="#' . $indicator . '">' . do_shortcode($content) . '</div></div>';
+	<div hx-trigger="' . $atts['trigger'] . '" id="' . $atts['id'] . '" hx-get="' . $atts['url'] . '" hx-indicator="#' . $indicator . '">' . do_shortcode($content) . '</div></div>';
 }
 
 /**
