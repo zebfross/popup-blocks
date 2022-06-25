@@ -67,14 +67,14 @@ $colors: (
 // scss-docs-end colors-map
 
 // scss-docs-start theme-color-variables
-$primary:       #278575 !default;
-$secondary:     $gray-600 !default;
-$success:       $green !default;
-$info:          $cyan !default;
-$warning:       $yellow !default;
-$danger:        $red !default;
-$light:         $gray-100 !default;
-$dark:          $gray-900 !default;
+$primary:       #FFE24A !default;
+$secondary:     #1F1F1F !default;
+$success:       #008585 !default;
+$info:          #A964FF !default;
+$warning:       #E48901 !default;
+$danger:        #D31F4A !default;
+$light:         #ECECEC !default;
+$dark:          $secondary !default;
 // scss-docs-end theme-color-variables
 
 // scss-docs-start theme-colors-map
@@ -1186,7 +1186,7 @@ $dropdown-header-padding:           $dropdown-padding-y $dropdown-item-padding-x
 
 // scss-docs-start dropdown-dark-variables
 $dropdown-dark-color:               $gray-300 !default;
-$dropdown-dark-bg:                  $gray-800 !default;
+$dropdown-dark-bg:                  $secondary !default;
 $dropdown-dark-border-color:        $dropdown-border-color !default;
 $dropdown-dark-divider-bg:          $dropdown-divider-bg !default;
 $dropdown-dark-box-shadow:          null !default;
