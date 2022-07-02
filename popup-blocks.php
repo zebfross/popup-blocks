@@ -165,7 +165,7 @@ function shortcode_modal_button($atts, $content="") {
 	}
 
 	if ($atts['type'] == 'button' && empty($atts['classes']))
-		$atts['classes'] .= 'btn btn-primary';
+		$atts['classes'] .= 'btn btn-secondary';
 
 	$attributes = 'class="' . $atts['classes'] . '" ';
 	$dynamic = !empty($atts['url']);
@@ -258,7 +258,7 @@ function shortcode_modal($atts, $content="") {
 				<div class="modal-header sticky-modal-header">
 					<h5 class="modal-title" id=""><?= $atts['title'] ?></h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
+						<span aria-hidden="true" class="visually-hidden">&times;</span>
 					</button>
 				</div>
 					<?php echo $indicator ?>
@@ -267,8 +267,8 @@ function shortcode_modal($atts, $content="") {
 				</div>
 				<?php if ($atts['form'] === 'true'): ?>
 					<div class="modal-footer sticky-modal-footer">
-						<button type="button" class="btn btn-secondary modal-btn-cancel" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary modal-btn-save" onclick="saveNearestForm(this)"><?php echo $atts['form_button'] ?></button>
+						<button type="button" class="btn btn-primary modal-btn-cancel" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-secondary modal-btn-save" onclick="saveNearestForm(this)"><?php echo $atts['form_button'] ?></button>
 					</div>
 				<?php endif; ?>
 			</div>
